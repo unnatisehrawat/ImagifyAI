@@ -4,24 +4,24 @@ import 'dotenv/config'
 import connectDB from "./config/mongodb.js"
 import userRouter from "./routes/userRoutes.js"
 import imageRouter from "./routes/imageRoutes.js"
+import postRouter from "./routes/postRoutes.js"
 
 const PORT = process.env.PORT || 4000
 const app = express()
-app.use(express.json())
-app.use(cors({ origin: ["https://imagify-ai-orpin.vercel.app", "http://localhost:5173"] }))
 
+app.use(express.json({ limit: '50mb' }))
+app.use(cors({ origin: ["https://imagify-ai-orpin.vercel.app", "http://localhost:5173"] }))
 
 await connectDB();
 
-app.use('/api/user' , userRouter)
-app.use('/api/image' , imageRouter)
-app.get( '/' , (req, res) => {
+app.use('/api/user', userRouter)
+app.use('/api/image', imageRouter)
+app.use('/api/posts', postRouter)
+
+app.get('/', (req, res) => {
     res.send(" API working fine")
 })
-
 
 app.listen(PORT, () => {
     console.log("server running on port" + PORT)
 })
-
-//unnatiimagnifyAI26

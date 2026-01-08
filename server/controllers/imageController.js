@@ -8,13 +8,6 @@ export const generateImage = async (req, res) => {
     if (!user || !prompt) {
       return res.json({ success: false, message: "missing details" })
     }
-    if (user.creditBalance === 0 || user.creditBalance < 0) {
-      return res.json({
-        success: false,
-        message: 'No credit balance',
-        creditBalance: user.creditBalance
-      })
-    }
     const formData = new FormData()
     formData.append('prompt', prompt)
 
@@ -26,10 +19,11 @@ export const generateImage = async (req, res) => {
     const base64Image = Buffer.from(data, 'binary').toString('base64')
     const resultImage = `data:image/png;base64,${base64Image}`
 
-    await userModel.findByIdAndUpdate(user._id, { creditBalance: user.creditBalance - 1 })
+    // Credit deduction removed for Community Edition
+    // await userModel.findByIdAndUpdate(user._id, { creditBalance: user.creditBalance - 1 })
 
     res.json({
-      success: true, message: 'image generated', creditBalance: user.creditBalance - 1, resultImage
+      success: true, message: 'image generated', creditBalance: user.creditBalance, resultImage
     })
   } catch (error) {
     console.log(error.message)

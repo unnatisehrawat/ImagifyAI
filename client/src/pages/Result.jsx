@@ -3,6 +3,8 @@ import { assets } from '../assets/assets'
 import { motion } from 'framer-motion'
 import App from '../App';
 import { AppContext } from '../context/AppContext';
+import axios from 'axios'
+import { toast } from 'react-toastify'
 
 
 const Result = () => {
@@ -11,18 +13,21 @@ const Result = () => {
   const [loading, setLoading] = useState(false);
   const [input, setInput] = useState('');
 
-  const { generateImage } = useContext(AppContext)
+  const { generateImage, backendUrl, token } = useContext(AppContext)
+
   const onSubmitHandler = async (e) => {
     e.preventDefault()
     if (input) {
-      const image = await generateImage(input)
-      if (image) {
+      setLoading(true);
+      const newImage = await generateImage(input)
+      if (newImage) {
         setIsImageLoaded(true)
-        setImage(image)
+        setImage(newImage)
       }
     }
     setLoading(false)
   }
+
   return (
     <motion.form
       initial={{ opacity: 0.2, y: 100 }}
@@ -60,9 +65,22 @@ const Result = () => {
           >Generate another </p>
           <a href={image} download className='bg-zinc-900 px-10 py-3 rounded-full cursor-pointer'>
             Download</a>
+          <button className='bg-indigo-600 px-10 py-3 rounded-full cursor-pointer hover:scale-105 transition-all'
+            onClick={async () => {
+              try {
+                const { data } = await axios.post(backendUrl + '/api/posts/create', { prompt: input, image }, { headers: { token } })
+                if (data.success) {
+                  toast.success("Published to Community!")
+                } else {
+                  toast.error(data.message)
+                }
+              } catch (error) {
+                toast.error(error.message)
+              }
+            }}>Publish</button>
         </div>
       }
-    </motion.form>
+    </motion.form >
   )
 }
 
