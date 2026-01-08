@@ -8,7 +8,7 @@ import imageRouter from "./routes/imageRoutes.js"
 const PORT = process.env.PORT || 4000
 const app = express()
 app.use(express.json())
-app.use(cors())
+app.use(cors({ origin: ["https://imagify-ai-orpin.vercel.app", "http://localhost:5173"] }))
 
 
 await connectDB();
