@@ -11,7 +11,7 @@ const app = express()
 
 app.use(express.json({ limit: '50mb' }))
 app.use(express.urlencoded({ limit: '50mb', extended: true }))
-app.use(cors({ origin: ["https://imagify-ai-orpin.vercel.app", "https://imagify-ai-orpin.vercel.app/", "http://localhost:5173"] }))
+app.use(cors({ origin: "*" }))
 
 app.use('/api/user', userRouter)
 app.use('/api/image', imageRouter)

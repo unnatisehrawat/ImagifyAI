@@ -15,6 +15,8 @@ export const createPost = async (req, res) => {
             return res.json({ success: false, message: "User not found" });
         }
 
+        console.log(`Creating post for user: ${userId}, Image size: ${Math.round(image.length / 1024)} KB`);
+
         const newPost = new postModel({
             userId,
             userName: user.name,
@@ -23,6 +25,7 @@ export const createPost = async (req, res) => {
         })
 
         await newPost.save();
+        console.log("Post saved successfully!");
         res.json({ success: true, message: "Post published to Community!" });
 
     } catch (error) {
