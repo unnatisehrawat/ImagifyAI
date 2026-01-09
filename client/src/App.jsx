@@ -3,7 +3,7 @@ import React, { useContext } from 'react'
 import Home from './pages/Home'
 
 import Result from './pages/Result'
-import Community from './pages/Community'
+import MyCreations from './pages/Community'
 import { Route, Routes } from 'react-router'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
@@ -23,7 +23,7 @@ const App = () => {
         <Route path="/" element={<Home />} />
         <Route path="/result" element={<Result />} />
 
-        <Route path="/community" element={<Community />} />
+        <Route path="/community" element={<MyCreations />} />
 
 
       </Routes>

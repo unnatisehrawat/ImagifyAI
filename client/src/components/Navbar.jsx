@@ -17,7 +17,7 @@ const Navbar = () => {
                 {
                     user ?
                         <div className='flex items-center gap-2 sm:gap-3'>
-                            <p onClick={() => navigate('/community')} className='cursor-pointer text-gray-600 hover:text-black transition-colors mr-4 sm:mr-10'>Community</p>
+                            <p onClick={() => navigate('/community')} className='cursor-pointer text-gray-600 hover:text-black transition-colors mr-4 sm:mr-10'>My Creations</p>
 
                             <p className='text-gray-600 cursor-default'> Hi, {user.name}</p>
                             <div className='relative group cursor-pointer'>
@@ -33,7 +33,7 @@ const Navbar = () => {
                         </div>
                         :
                         <div className='flex items-center gap-2 sm:gap-5'>
-                            <p onClick={() => navigate('/community')} className='cursor-pointer text-gray-600 hover:text-black transition-colors'>Community</p>
+                            <p onClick={() => navigate('/community')} className='cursor-pointer text-gray-600 hover:text-black transition-colors mr-4 sm:mr-10'>My Creations</p>
                             <button className='bg-zinc-800 text-white px-7 py-2 sm:px-10 text-sm rounded-full cursor-pointer'
                                 onClick={() => setShowLogin(true)}
 

@@ -87,22 +87,25 @@ const Result = () => {
           <button className='bg-indigo-600 px-10 py-3 rounded-full cursor-pointer hover:scale-105 transition-all'
             onClick={async () => {
               try {
-                toast.info("Preparing image for publish...")
+                toast.info("Saving to your creations...")
                 const compressedImage = await compressImage(image);
 
-                console.log("Original Size:", Math.round(image.length / 1024), "KB");
-                console.log("Compressed Size:", Math.round(compressedImage.length / 1024), "KB");
+                // Save to LocalStorage
+                const existingCreations = JSON.parse(localStorage.getItem('creations') || '[]');
+                const newCreation = {
+                  _id: Date.now().toString(),
+                  image: compressedImage,
+                  prompt: input,
+                  createdAt: new Date().toISOString()
+                };
 
-                const { data } = await axios.post(backendUrl + '/api/posts/create', { prompt: input, image: compressedImage }, { headers: { token } })
-                if (data.success) {
-                  toast.success("Published to Community!")
-                } else {
-                  toast.error(data.message)
-                }
+                localStorage.setItem('creations', JSON.stringify([newCreation, ...existingCreations]));
+
+                toast.success("Saved to My Creations!")
               } catch (error) {
-                toast.error(error.message)
+                toast.error("Failed to save. Storage might be full.")
               }
-            }}>Publish</button>
+            }}>Save to Creations</button>
         </div>
       }
     </motion.form >
