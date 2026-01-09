@@ -2,41 +2,25 @@ import { createContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import axios from 'axios'
 import { useNavigate } from "react-router";
+
 export const AppContext = createContext()
+
 const AppContextProvider = (props) => {
     const [user, setUser] = useState(false);
     const [showLogin, setShowLogin] = useState(false)
     const [token, setToken] = useState(localStorage.getItem('token'))
 
-    const [credit, setCredit] = useState(false)
-
     const backendUrl = import.meta.env.VITE_BACKEND_URL
     const navigate = useNavigate()
 
-    const loadCreditsData = async () => {
-        try {
-            const { data } = await axios.get(backendUrl + '/api/user/credits', { headers: { token } })
-            if (data.success) {
-                setCredit(data.credits)
-                setUser(data.user)
-            }
-        } catch (error) {
-            console.log(error)
-            toast.error(error.message)
-        }
-    }
     const generateImage = async (prompt) => {
         try {
             const { data } = await axios.post(backendUrl + '/api/image/generate-image', { prompt }, { headers: { token } })
             if (data.success) {
-                loadCreditsData()
                 return data.resultImage
             } else {
                 toast.error(data.message)
-                loadCreditsData()
             }
-
-
         } catch (error) {
             toast.error(error.message)
         }
@@ -48,17 +32,26 @@ const AppContextProvider = (props) => {
         setUser(null)
     }
 
+    // Effect to check if user info is needed on mount/token change
     useEffect(() => {
-        if (token) {
-            loadCreditsData()
+        const fetchUser = async () => {
+            if (token) {
+                try {
+                    const { data } = await axios.get(backendUrl + '/api/user/credits', { headers: { token } })
+                    if (data.success) {
+                        setUser(data.user)
+                    }
+                } catch (error) {
+                    console.log(error)
+                }
+            }
         }
-
+        fetchUser()
     }, [token])
+
     const value = {
-        user, setUser, showLogin, setShowLogin, backendUrl, token, setToken, credit, setCredit, loadCreditsData, logout, generateImage
-
+        user, setUser, showLogin, setShowLogin, backendUrl, token, setToken, logout, generateImage
     }
-
 
     return (
         <AppContext.Provider value={value}>
@@ -66,4 +59,5 @@ const AppContextProvider = (props) => {
         </AppContext.Provider>
     )
 }
+
 export default AppContextProvider

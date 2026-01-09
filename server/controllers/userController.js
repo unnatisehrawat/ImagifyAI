@@ -80,7 +80,7 @@ export const userCredits = async (req, res) => {
         console.log("User Credits request for userId:", userId);
 
         const user = await userModel.findById(userId)
-        res.json({ success: true, credits: user.creditBalance, user: { name: user.name } })
+        res.json({ success: true, user: { name: user.name } })
 
     } catch (error) {
         console.log(error.message)

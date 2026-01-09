@@ -5,7 +5,7 @@ import { AppContext } from '../context/AppContext.jsx'
 
 
 const Navbar = () => {
-    const { user, setShowLogin, logout, credit } = useContext(AppContext)
+    const { user, setShowLogin, logout } = useContext(AppContext)
     const navigate = useNavigate();
     return (
 
