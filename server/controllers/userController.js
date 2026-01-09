@@ -89,6 +89,14 @@ export const userCredits = async (req, res) => {
 
 }
 
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+    }
+});
+
 export const sendResetOtp = async (req, res) => {
     try {
         const { email } = req.body;
@@ -99,22 +107,12 @@ export const sendResetOtp = async (req, res) => {
         }
 
         const otp = String(Math.floor(100000 + Math.random() * 900000));
-
-        // Hash OTP before saving
         const hashedOtp = crypto.createHash("sha256").update(otp).digest("hex");
 
         user.resetOtp = hashedOtp;
-        user.resetOtpExpire = Date.now() + 15 * 60 * 1000; // 15 minutes
+        user.resetOtpExpire = Date.now() + 15 * 60 * 1000;
 
         await user.save();
-
-        const transporter = nodemailer.createTransport({
-            service: 'gmail',
-            auth: {
-                user: process.env.SMTP_USER,
-                pass: process.env.SMTP_PASS,
-            }
-        });
 
         const mailOptions = {
             from: process.env.SMTP_USER,
@@ -123,13 +121,18 @@ export const sendResetOtp = async (req, res) => {
             text: `Your OTP for password reset is ${otp}. Use this to reset your password.`
         };
 
+        console.log("Attempting to send OTP email...");
+        const startTime = Date.now();
+
         await transporter.sendMail(mailOptions);
+
+        console.log(`Email sent successfully in ${Date.now() - startTime}ms`);
 
         res.json({ success: true, message: "OTP sent to your email" });
 
     } catch (error) {
-        console.log(error);
-        res.json({ success: false, message: error.message });
+        console.log("Email error:", error);
+        res.json({ success: false, message: "Failed to send OTP. Please try again later." });
     }
 }
 
