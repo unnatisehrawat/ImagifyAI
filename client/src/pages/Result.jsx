@@ -68,6 +68,7 @@ const Result = () => {
           <button className='bg-indigo-600 px-10 py-3 rounded-full cursor-pointer hover:scale-105 transition-all'
             onClick={async () => {
               try {
+                console.log("Publishing to:", backendUrl + '/api/posts/create');
                 const { data } = await axios.post(backendUrl + '/api/posts/create', { prompt: input, image }, { headers: { token } })
                 if (data.success) {
                   toast.success("Published to Community!")
