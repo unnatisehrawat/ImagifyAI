@@ -15,6 +15,25 @@ const Result = () => {
 
   const { generateImage, backendUrl, token } = useContext(AppContext)
 
+  const compressImage = (base64Str, maxWidth = 800) => {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.src = base64Str;
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const scale = maxWidth / img.width;
+        canvas.width = maxWidth;
+        canvas.height = img.height * scale;
+
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+        // Convert to highly compressed JPEG
+        resolve(canvas.toDataURL('image/jpeg', 0.7));
+      };
+    });
+  };
+
   const onSubmitHandler = async (e) => {
     e.preventDefault()
     if (input) {
@@ -68,8 +87,13 @@ const Result = () => {
           <button className='bg-indigo-600 px-10 py-3 rounded-full cursor-pointer hover:scale-105 transition-all'
             onClick={async () => {
               try {
-                console.log("Publishing to:", backendUrl + '/api/posts/create');
-                const { data } = await axios.post(backendUrl + '/api/posts/create', { prompt: input, image }, { headers: { token } })
+                toast.info("Preparing image for publish...")
+                const compressedImage = await compressImage(image);
+
+                console.log("Original Size:", Math.round(image.length / 1024), "KB");
+                console.log("Compressed Size:", Math.round(compressedImage.length / 1024), "KB");
+
+                const { data } = await axios.post(backendUrl + '/api/posts/create', { prompt: input, image: compressedImage }, { headers: { token } })
                 if (data.success) {
                   toast.success("Published to Community!")
                 } else {
